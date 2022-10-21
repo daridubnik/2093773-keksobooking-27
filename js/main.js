@@ -29,7 +29,7 @@ const GUESTS = {
   MAX_GUESTS: 100,
 };
 
-const TIME = [
+const TIMES = [
   '12:00',
   '13:00',
   '14:00'
@@ -66,7 +66,7 @@ const LOCATION = {
 };
 
 // Задает количество сгенерированных объявлений
-const SIMILAR_AD_COUNT = 10;
+const SIMILAR_ADVERT_COUNT = 10;
 
 // Возвращает случайное положительное число из заданного диапазона, вкл. пограничные значения; с указанием количества знаков после запятой (по умолчанию - целое число)
 const getRandomPositiveNumber = (min, max, digits = 0) => {
@@ -78,52 +78,46 @@ const getRandomPositiveNumber = (min, max, digits = 0) => {
     [min, max] = [max, min];
   }
 
-  return +(Math.random() * (max - min + 1) + min).toFixed(digits);
+  if (digits) {
+    return +(Math.random() * (max - min) + min).toFixed(digits);
+  }
+
+  return Math.floor(Math.random() * (max - min + 1) + min);
 };
 
 // Возвращает случайный элемент массива
 const getRandomArrayElement = (array) => array[getRandomPositiveNumber(0, array.length - 1)];
 
-// Возвращает случайную координату широты в заданном диапазоне
-const getRandomLatitude = () =>
-  getRandomPositiveNumber(LOCATION.MIN_LATITUDE, LOCATION.MAX_LATITUDE, 5);
-
-// Возвращает случайную координа долготы в заданном диапозоне
-const getRandomLongitude = () =>
-  getRandomPositiveNumber(LOCATION.MIN_LONGITUDE, LOCATION.MAX_LONGITUDE, 5);
-
-const createAuthor = (index) => ({
-  avatar: `img/avatars/user${index.toString().padStart(2, '0')}.png`,
-});
-
-const createOffer = () => ({
-  title: getRandomArrayElement(TITLES),
-  address: `${getRandomLatitude()}, ${getRandomLongitude()}`,
-  price: getRandomPositiveNumber(PRICE.MIN_PRICE, PRICE.MAX_PRICE),
-  type: getRandomArrayElement(TYPES),
-  rooms: getRandomPositiveNumber(ROOMS.MIN_ROOMS, ROOMS.MAX_ROOMS),
-  guests: getRandomPositiveNumber(GUESTS.MIN_GUESTS, GUESTS.MAX_GUESTS),
-  checkin: getRandomArrayElement(TIME),
-  checkout: getRandomArrayElement(TIME),
-  features: FEATURES.slice(0, getRandomPositiveNumber(0, FEATURES.length)),
-  description: getRandomArrayElement(DESCRIPTIONS),
-  photos: PHOTOS.slice(0, getRandomPositiveNumber(0, PHOTOS.length)),
-});
-
-const createLocation = () => ({
-  lat: getRandomLatitude(),
-  lng: getRandomLongitude(),
-});
-
 // Создает одно объявление
-const createAd = (index) => ({
-  author: createAuthor(index),
-  offer: createOffer(),
-  location: createLocation(),
-});
+const createAdvert = (index) => {
+  const location = {
+    lat: getRandomPositiveNumber(LOCATION.MIN_LATITUDE, LOCATION.MAX_LATITUDE, 5),
+    lng: getRandomPositiveNumber(LOCATION.MIN_LONGITUDE, LOCATION.MAX_LONGITUDE, 5),
+  };
+
+  return {
+    author: {
+      avatar: `img/avatars/user${index.toString().padStart(2, '0')}.png`,
+    },
+    offer: {
+      title: getRandomArrayElement(TITLES),
+      address: `${location.lat}, ${location.lng}`,
+      price: getRandomPositiveNumber(PRICE.MIN_PRICE, PRICE.MAX_PRICE),
+      type: getRandomArrayElement(TYPES),
+      rooms: getRandomPositiveNumber(ROOMS.MIN_ROOMS, ROOMS.MAX_ROOMS),
+      guests: getRandomPositiveNumber(GUESTS.MIN_GUESTS, GUESTS.MAX_GUESTS),
+      checkin: getRandomArrayElement(TIMES),
+      checkout: getRandomArrayElement(TIMES),
+      features: FEATURES.slice(0, getRandomPositiveNumber(0, FEATURES.length)),
+      description: getRandomArrayElement(DESCRIPTIONS),
+      photos: PHOTOS.slice(0, getRandomPositiveNumber(0, PHOTOS.length)),
+    },
+    location,
+  };
+};
 
 // Создает массив из указанного количества объявлений
-const similarAds = () =>
-  Array.from({ length: SIMILAR_AD_COUNT }, (_, adIndex) => createAd(adIndex + 1));
+const createAdverts = () =>
+  Array.from({ length: SIMILAR_ADVERT_COUNT }, (_, advertIndex) => createAdvert(advertIndex + 1));
 
-similarAds();
+createAdverts();
