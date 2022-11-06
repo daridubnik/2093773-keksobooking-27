@@ -18,4 +18,7 @@ const getRandomPositiveNumber = (min, max, digits = 0) => {
 // Возвращает случайный элемент массива
 const getRandomArrayElement = (array) => array[getRandomPositiveNumber(0, array.length - 1)];
 
-export {getRandomPositiveNumber, getRandomArrayElement};
+// Возвращает существительное в нужном падеже
+const getCase = (number, word, cases = [2, 0, 1, 1, 1, 2]) => word[(number % 100 > 4 && number % 100 < 20) ? 2 : cases[(number % 10 < 5) ? number % 10 : 5]];
+
+export {getRandomPositiveNumber, getRandomArrayElement, getCase};
