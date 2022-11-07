@@ -1,30 +1,38 @@
 const adForm = document.querySelector('.ad-form');
-const adFormElements = adForm.querySelectorAll('fieldset');
+const adFormFields = adForm.querySelectorAll('fieldset');
 const mapFilters = document.querySelector('.map__filters');
-const mapFiltersElements = mapFilters.querySelectorAll('select, fieldset');
+const mapFiltersFields = mapFilters.querySelectorAll('select, fieldset');
 
 // Перебирает коллекцию переданных элементов и блокирует/разблокирует элементы в зависимости от указанного состояния
-const getStateElements = (elements, state) => {
-  elements.forEach((element) => {
-    element.disabled = state;
-  });
+const setStateElements = (elements, state) => elements.forEach((element) => {element.disabled = state;});
+
+const setInactiveAdFormState = () => {
+  adForm.classList.add('ad-form--disabled');
+  setStateElements(adFormFields, true);
+};
+
+const setInactiveFilterFormState = () => {
+  mapFilters.classList.add('map__filters--disabled ');
+  setStateElements(mapFiltersFields, true);
 };
 
 // Переключает страницу в неактивное состояние
-const getInactivePage = () => {
-  adForm.classList.add('ad-form--disabled');
-  getStateElements(adFormElements, true);
-  mapFilters.classList.add('map__filters--disabled ');
-  getStateElements(mapFiltersElements, true);
+const setInactivePageSate = () => {
+  setInactiveAdFormState();
+  setInactiveFilterFormState();
 };
 
-// Переключает страницу в активное состояние
-const getActivePage = () => {
+// Переключает форму в активное состояние
+const setActiveAdFormState = () => {
   adForm.classList.remove('ad-form--disabled');
-  getStateElements(adFormElements, false);
-  mapFilters.classList.remove('map__filters--disabled ');
-  getStateElements(mapFiltersElements, false);
+  setStateElements(adFormFields, false);
 };
 
-export {getInactivePage, getActivePage};
+// Переключает фильтры на карте в активное состояние
+const setActiveFilterFormState = () => {
+  mapFilters.classList.remove('map__filters--disabled ');
+  setStateElements(mapFiltersFields, false);
+};
+
+export {setInactivePageSate, setActiveAdFormState, setActiveFilterFormState};
 
