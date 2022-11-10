@@ -45,7 +45,7 @@ const getСapacityErrorMessage = () => {
   if (roomNumber.value === '100') {
     return 'Не для гостей';
   }
-  return `Указанное количество комнат вмещает ${NUMBER_OF_GUESTS[roomNumber.value].join(', ' )} ${roomNumber.value === '1' ? 'гостя' : 'гостей'}`;
+  return `Указанное количество комнат вмещает ${NUMBER_OF_GUESTS[roomNumber.value].join(', ')} ${roomNumber.value === '1' ? 'гостя' : 'гостей'}`;
 };
 
 pristine.addValidator(capacity, validateСapacity, getСapacityErrorMessage);
