@@ -85,9 +85,7 @@ const addAdFormListeners = (onSuccessCallback, onErrorCallback) => {
   adForm.addEventListener('submit', (evt) => {
     evt.preventDefault();
 
-    if (pristine.validate()) {
-
-    }
+    if (pristine.validate()) {}
   });
 };
 
