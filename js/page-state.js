@@ -12,7 +12,7 @@ const setInactiveAdFormState = () => {
 };
 
 const setInactiveFilterFormState = () => {
-  mapFilters.classList.add('map__filters--disabled ');
+  mapFilters.classList.add('map__filters--disabled');
   setStateElements(mapFiltersFields, true);
 };
 
