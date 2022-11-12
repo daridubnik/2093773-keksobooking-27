@@ -1,5 +1,6 @@
 import { createAdverts } from './data.js';
 import {createCard} from './card.js';
+import './form-validation.js';
 
 // Находит блок для вставки карточки с объявлением
 const map = document.querySelector('#map-canvas');
