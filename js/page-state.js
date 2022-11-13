@@ -30,7 +30,7 @@ const setActiveAdFormState = () => {
 
 // Переключает фильтры на карте в активное состояние
 const setActiveFilterFormState = () => {
-  mapFilters.classList.remove('map__filters--disabled ');
+  mapFilters.classList.remove('map__filters--disabled');
   setStateElements(mapFiltersFields, false);
 };
 

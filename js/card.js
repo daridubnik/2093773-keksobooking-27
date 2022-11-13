@@ -32,7 +32,7 @@ const pasteAvatar = (parent, cssClass, data) => {
 // Возвращает фото, загруженные пользователем, если данных нет - удаляет блок для фото
 const pastePhotos = (parent, cssClass, data) => {
   const element = parent.querySelector(cssClass);
-  if (!data.length) {
+  if (!data) {
     element.remove();
     return;
   }
@@ -49,7 +49,7 @@ const pastePhotos = (parent, cssClass, data) => {
 // Возвращает список особенностей, отмеченных пользователем, если данных нет - удаляет блок особенностей
 const pasteFeatures = (parent, cssClass, data) => {
   const element = parent.querySelector(cssClass);
-  if (!data.length) {
+  if (!data) {
     element.remove();
     return;
   }
