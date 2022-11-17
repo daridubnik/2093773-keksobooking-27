@@ -24,4 +24,8 @@ const initSlider = () => {
   });
 };
 
-export {initSlider};
+const resetSliderValue = () => {
+  initSlider.noUiSlider.set(0);
+};
+
+export {initSlider, resetSliderValue};
