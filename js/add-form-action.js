@@ -1,6 +1,9 @@
 import { setActiveAdFormState } from './page-state.js';
 import { addPhotoInputsListeners } from './preload-images.js';
-import { initSlider } from './slider.js';
+import { initSlider, resetSliderValue } from './slider.js';
+import { resetMap } from './init-map.js';
+import { clearImageBlocks } from './preload-images.js';
+import { sendData } from './api.js';
 
 const MIN_LENGTH_TITLE = 30;
 const MAX_LENGTH_TITLE = 100;
@@ -27,6 +30,8 @@ const roomNumberField = adForm.querySelector('#room_number');
 const capacityField = adForm.querySelector('#capacity');
 const timeInField = adForm.querySelector('#timein');
 const timeOutField = adForm.querySelector('#timeout');
+const submitButton = adForm.querySelector('.ad-form__submit');
+const resetButton = adForm.querySelector('.ad-form__reset');
 
 const pristine = new Pristine(adForm, {
   classTo: 'ad-form__element',
@@ -42,17 +47,14 @@ Pristine.addMessages('ru', {
 
 Pristine.setLocale('ru');
 
-// Валидация заголовка
 const validateTitle = (value) => value.length >= MIN_LENGTH_TITLE && value.length <= MAX_LENGTH_TITLE;
 const getTitleErrorMessage = () => `От ${MIN_LENGTH_TITLE} до ${MAX_LENGTH_TITLE} символов`;
 
-// Валидация цены
 const validatePrice = (value) => value >= MIN_PRICE[typeField.value] && value <= MAX_PRICE;
 const getPriceErrorMessage = () =>
   `За выбранный тип жилья минимальная цена ${MIN_PRICE[typeField.value]}, максимальная цена ${MAX_PRICE}`;
 
 
-// Валидация вместимости гостей
 const validateCapacity = () => NUMBER_OF_GUESTS[roomNumberField.value].includes(capacityField.value);
 const getCapacityErrorMessage = () => {
   if (roomNumberField.value === '100') {
@@ -67,7 +69,24 @@ const addAdFormValidation = () => {
   pristine.addValidator(capacityField, validateCapacity, getCapacityErrorMessage);
 };
 
-const addAdFormListeners = (onSuccessCallback, onErrorCallback) => {
+const blockSubmitButton = () => {
+  submitButton.disabled = true;
+  submitButton.textContent = 'Отправляю...';
+};
+
+const unblockSubmitButton = () => {
+  submitButton.disabled = false;
+  submitButton.textContent = 'Опубликовать';
+};
+
+const resetForm = () => {
+  adForm.reset();
+  resetSliderValue();
+  resetMap();
+  clearImageBlocks();
+};
+
+const addAdFormListeners = (onSuccess, onError) => {
   addPhotoInputsListeners();
   typeField.addEventListener('change', () => {
     priceField.placeholder = MIN_PRICE[typeField.value];
@@ -82,20 +101,36 @@ const addAdFormListeners = (onSuccessCallback, onErrorCallback) => {
     timeInField.value = timeOutField.value;
   });
 
+  resetButton.addEventListener('click', (evt) => {
+    evt.preventDefault();
+    resetForm();
+  });
+
   adForm.addEventListener('submit', (evt) => {
     evt.preventDefault();
-
     if (pristine.validate()) {
-
+      blockSubmitButton();
+      sendData(
+        () => {
+          onSuccess();
+          resetForm();
+          unblockSubmitButton();
+        },
+        () => {
+          onError();
+          unblockSubmitButton();
+        },
+        new FormData(evt.target),
+      );
     }
   });
 };
 
-const addAdFormAction = (onSuccessCallback, onErrorCallback) => {
+const addAdFormAction = (onSuccess, onError) => {
   setActiveAdFormState();
   addAdFormValidation();
   initSlider();
-  addAdFormListeners(onSuccessCallback, onErrorCallback);
+  addAdFormListeners(onSuccess, onError);
 };
 
 export { addAdFormAction };

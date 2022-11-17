@@ -2,6 +2,8 @@ import {setActiveFilterFormState} from './page-state.js';
 import {createCard} from './card.js';
 import {addAdFormAction} from './add-form-action.js';
 import {createAdverts} from './data.js';
+import {getData} from './api.js';
+import {showSuccessMessage, showErrorMessage} from './message.js';
 
 const START_LOCATION = {
   lat: 35.68172,
@@ -10,6 +12,7 @@ const START_LOCATION = {
 
 const DECIMALS = 5;
 const MAP_ZOOM = 12;
+const ADVERTS_COUNT = 10;
 
 const data = createAdverts();
 
@@ -46,7 +49,7 @@ const addMarkerGroup = () => {
 const onMarkerMove = (evt) => setLocation(evt.target);
 
 const setAdFormStartState = () => {
-  addAdFormAction();
+  addAdFormAction(showSuccessMessage, showErrorMessage);
   setStartAddressValue();
   addMarkerGroup();
 };
@@ -55,6 +58,9 @@ const initMap = () => {
   interactiveMap
     .on('load', () => {
       setAdFormStartState();
+      getData((offers) => {
+        addMarkerGroup(offers.slice(0, ADVERTS_COUNT));
+      });
       setActiveFilterFormState();
     })
     .setView(START_LOCATION, MAP_ZOOM);
@@ -76,4 +82,10 @@ const initMap = () => {
   interactiveMarker.on('move', onMarkerMove);
 };
 
-export {initMap};
+const resetMap = () => {
+  interactiveMap.setView(START_LOCATION, MAP_ZOOM);
+  interactiveMap.closePopup();
+  interactiveMarker.setLatLng(START_LOCATION);
+};
+
+export {initMap, resetMap};
