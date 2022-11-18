@@ -1,7 +1,10 @@
 import {showAlert} from './util.js';
 
+const GET_DATA = 'https://27.javascript.pages.academy/keksobooking/data';
+const SEND_DATA = 'https://27.javascript.pages.academy/keksobooking';
+
 const getData = (onSuccess) => {
-  fetch('https://27.javascript.pages.academy/keksobooking/data')
+  fetch(GET_DATA)
     .then((response) => response.json())
     .then((offers) => {
       onSuccess(offers);
@@ -13,7 +16,7 @@ const getData = (onSuccess) => {
 
 const sendData = (onSuccess, onError, body) => {
   fetch(
-    'https://27.javascript.pages.academy/keksobooking',
+    SEND_DATA,
     {
       method: 'POST',
       body,

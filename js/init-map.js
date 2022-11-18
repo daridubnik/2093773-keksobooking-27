@@ -1,7 +1,6 @@
 import {setActiveFilterFormState} from './page-state.js';
 import {createCard} from './card.js';
 import {addAdFormAction} from './add-form-action.js';
-import {createAdverts} from './data.js';
 import {getData} from './api.js';
 import {showSuccessMessage, showErrorMessage} from './message.js';
 
@@ -13,8 +12,6 @@ const START_LOCATION = {
 const DECIMALS = 5;
 const MAP_ZOOM = 12;
 const ADVERTS_COUNT = 10;
-
-const data = createAdverts();
 
 const addressInput = document.querySelector('#address');
 const interactiveMap = L.map('map-canvas');
@@ -32,7 +29,7 @@ const setLocation = (target) => {
   addressInput.value = `${location.lat.toFixed(DECIMALS)}, ${location.lng.toFixed(DECIMALS)}`;
 };
 
-const addMarkerGroup = () => {
+const addMarkerGroup = (data) => {
   markerGroup.addTo(interactiveMap);
   data.forEach((offer) => {
     marker = L.marker(offer.location, {
@@ -51,17 +48,18 @@ const onMarkerMove = (evt) => setLocation(evt.target);
 const setAdFormStartState = () => {
   addAdFormAction(showSuccessMessage, showErrorMessage);
   setStartAddressValue();
-  addMarkerGroup();
+};
+
+const getDataCallback = (offers) => {
+  addMarkerGroup(offers.slice(0, ADVERTS_COUNT));
+  setActiveFilterFormState();
 };
 
 const initMap = () => {
   interactiveMap
     .on('load', () => {
       setAdFormStartState();
-      getData((offers) => {
-        addMarkerGroup(offers.slice(0, ADVERTS_COUNT));
-      });
-      setActiveFilterFormState();
+      getData(getDataCallback);
     })
     .setView(START_LOCATION, MAP_ZOOM);
 
