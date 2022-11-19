@@ -24,4 +24,14 @@ const showAlert = (message) => {
   }, ALERT_SHOW_TIME);
 };
 
-export {getCase, showAlert};
+// Устранения дребезга
+const debounce = (callback, timeoutDelay = 500) => {
+  let timeoutId;
+  return (...rest) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => callback.apply(this, rest), timeoutDelay);
+  };
+};
+
+
+export { getCase, showAlert, debounce };

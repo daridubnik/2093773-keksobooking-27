@@ -2,6 +2,7 @@ import { setActiveAdFormState } from './page-state.js';
 import { addPhotoInputsListeners } from './preload-images.js';
 import { initSlider, resetSliderValue } from './slider.js';
 import { resetMap } from './init-map.js';
+import { resetFilters } from './filters.js';
 import { clearImageBlocks } from './preload-images.js';
 import { sendData } from './api.js';
 
@@ -83,6 +84,7 @@ const resetForm = () => {
   adForm.reset();
   resetSliderValue();
   resetMap();
+  resetFilters();
   clearImageBlocks();
 };
 

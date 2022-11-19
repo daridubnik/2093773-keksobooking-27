@@ -15,8 +15,7 @@ const getData = (onSuccess) => {
 };
 
 const sendData = (onSuccess, onError, body) => {
-  fetch(
-    SEND_DATA,
+  fetch(SEND_DATA,
     {
       method: 'POST',
       body,

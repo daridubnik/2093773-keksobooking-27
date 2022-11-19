@@ -1,8 +1,9 @@
-import {setActiveFilterFormState} from './page-state.js';
-import {createCard} from './card.js';
-import {addAdFormAction} from './add-form-action.js';
-import {getData} from './api.js';
-import {showSuccessMessage, showErrorMessage} from './message.js';
+import { setActiveFilterFormState } from './page-state.js';
+import { createCard } from './card.js';
+import { addAdFormAction } from './add-form-action.js';
+import { checkAllFilters, activateFilters } from './filters.js';
+import { getData } from './api.js';
+import { showSuccessMessage, showErrorMessage } from './message.js';
 
 const START_LOCATION = {
   lat: 35.68172,
@@ -53,6 +54,9 @@ const setAdFormStartState = () => {
 const getDataCallback = (offers) => {
   addMarkerGroup(offers.slice(0, ADVERTS_COUNT));
   setActiveFilterFormState();
+  activateFilters(() => {
+    addMarkerGroup(checkAllFilters(offers));
+  });
 };
 
 const initMap = () => {
@@ -86,4 +90,5 @@ const resetMap = () => {
   interactiveMarker.setLatLng(START_LOCATION);
 };
 
-export {initMap, resetMap};
+
+export { markerGroup, addMarkerGroup, initMap, resetMap };
