@@ -1,9 +1,10 @@
 import {setActiveFilterFormState} from './page-state.js';
 import {createCard} from './card.js';
 import {addAdFormAction} from './add-form-action.js';
-import {createAdverts} from './data.js';
 import {getData} from './api.js';
 import {showSuccessMessage, showErrorMessage} from './message.js';
+import {filterData, setDataRanking} from './filters.js';
+import {debounce} from './util.js';
 
 const START_LOCATION = {
   lat: 35.68172,
@@ -13,10 +14,10 @@ const START_LOCATION = {
 const DECIMALS = 5;
 const MAP_ZOOM = 12;
 const ADVERTS_COUNT = 10;
-
-const data = createAdverts();
+const TIME_INTERVAL = 500;
 
 const addressInput = document.querySelector('#address');
+const formFilter = document.querySelector('.map__filters');
 const interactiveMap = L.map('map-canvas');
 const markerGroup = L.layerGroup();
 
@@ -32,18 +33,22 @@ const setLocation = (target) => {
   addressInput.value = `${location.lat.toFixed(DECIMALS)}, ${location.lng.toFixed(DECIMALS)}`;
 };
 
-const addMarkerGroup = () => {
+const addMarkerGroup = (data) => {
   markerGroup.addTo(interactiveMap);
-  data.forEach((offer) => {
-    marker = L.marker(offer.location, {
-      icon: L.icon({
-        iconUrl: './img/pin.svg',
-        iconSize: [40, 40],
-        iconAnchor: [20, 40],
-      }),
+  setDataRanking(data)
+    .slice()
+    .filter(filterData)
+    .slice(0, ADVERTS_COUNT)
+    .forEach((offer) => {
+      marker = L.marker(offer.location, {
+        icon: L.icon({
+          iconUrl: './img/pin.svg',
+          iconSize: [40, 40],
+          iconAnchor: [20, 40],
+        }),
+      });
+      marker.addTo(markerGroup).bindPopup(createCard(offer));
     });
-    marker.addTo(markerGroup).bindPopup(createCard(offer));
-  });
 };
 
 const onMarkerMove = (evt) => setLocation(evt.target);
@@ -51,17 +56,27 @@ const onMarkerMove = (evt) => setLocation(evt.target);
 const setAdFormStartState = () => {
   addAdFormAction(showSuccessMessage, showErrorMessage);
   setStartAddressValue();
-  addMarkerGroup();
+};
+
+const setMapChange = (data) => {
+  formFilter.addEventListener('change', debounce(() => {
+    markerGroup.clearLayers();
+    resetMap();
+    addMarkerGroup(data);
+  }, TIME_INTERVAL));
+};
+
+const getDataCallback = (data) => {
+  setActiveFilterFormState();
+  addMarkerGroup(data);
+  setMapChange(data);
 };
 
 const initMap = () => {
   interactiveMap
     .on('load', () => {
       setAdFormStartState();
-      getData((offers) => {
-        addMarkerGroup(offers.slice(0, ADVERTS_COUNT));
-      });
-      setActiveFilterFormState();
+      getData(getDataCallback);
     })
     .setView(START_LOCATION, MAP_ZOOM);
 
@@ -82,10 +97,10 @@ const initMap = () => {
   interactiveMarker.on('move', onMarkerMove);
 };
 
-const resetMap = () => {
+function resetMap () {
   interactiveMap.setView(START_LOCATION, MAP_ZOOM);
   interactiveMap.closePopup();
   interactiveMarker.setLatLng(START_LOCATION);
-};
+}
 
-export {initMap, resetMap};
+export {markerGroup, addMarkerGroup, initMap, resetMap};

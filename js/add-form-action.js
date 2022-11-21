@@ -1,6 +1,6 @@
 import { setActiveAdFormState } from './page-state.js';
 import { addPhotoInputsListeners } from './preload-images.js';
-import { initSlider, resetSliderValue } from './slider.js';
+import { initSlider, resetSlider } from './slider.js';
 import { resetMap } from './init-map.js';
 import { clearImageBlocks } from './preload-images.js';
 import { sendData } from './api.js';
@@ -23,6 +23,7 @@ const NUMBER_OF_GUESTS = {
 };
 
 const adForm = document.querySelector('.ad-form');
+const formFilter = document.querySelector('.map__filters');
 const titleField = adForm.querySelector('#title');
 const typeField = adForm.querySelector('#type');
 const priceField = adForm.querySelector('#price');
@@ -81,9 +82,12 @@ const unblockSubmitButton = () => {
 
 const resetForm = () => {
   adForm.reset();
-  resetSliderValue();
+  formFilter.reset();
+  resetSlider();
   resetMap();
   clearImageBlocks();
+  const customEvent = new CustomEvent('change');
+  formFilter.dispatchEvent(customEvent);
 };
 
 const addAdFormListeners = (onSuccess, onError) => {
