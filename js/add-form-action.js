@@ -1,6 +1,6 @@
 import { setActiveAdFormState } from './page-state.js';
 import { addPhotoInputsListeners } from './preload-images.js';
-import { initSlider, resetSlider } from './slider.js';
+import { initSlider, onTypeFieldChange, onPriceFieldChange, resetSlider } from './slider.js';
 import { resetMap } from './init-map.js';
 import { clearImageBlocks } from './preload-images.js';
 import { sendData } from './api.js';
@@ -92,9 +92,14 @@ const resetForm = () => {
 
 const addAdFormListeners = (onSuccess, onError) => {
   addPhotoInputsListeners();
-  typeField.addEventListener('change', () => {
+  typeField.addEventListener('change', (evt) => {
+    onTypeFieldChange(evt);
     priceField.placeholder = MIN_PRICE[typeField.value];
     pristine.validate(priceField);
+  });
+
+  priceField.addEventListener('change', () => {
+    onPriceFieldChange();
   });
 
   timeInField.addEventListener('change', () => {
